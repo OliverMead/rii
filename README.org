@@ -1,0 +1,26 @@
+#+TITLE: The ReverseInatorInator
+
+* Why?
+Why not? `rev` exists, but it only does the default operation of `rii`.
+This program is slower than `rev`, but there's more choice.
+* Compilation
+Compile it with `ghc`, I recommend the following:
+#+BEGIN_SRC sh :exports code
+ghc --make rii -static -O2
+#+END_SRC
+You can add `-rtsopts` or `-prof` if you're interested in those things.
+* Usage
+#+srcname: usagemessage
+#+BEGIN_SRC sh :exports results :results verbatim
+./rii --help
+#+END_SRC
+
+#+RESULTS: usagemessage
+: rii - The ReverseInatorInator
+:  Usage: rii - [-lwchv] [file ...]
+:  rii
+:   -l  --lines    reverse the order of the lines in the text
+:   -w  --words    reverse the order of words in each line
+:   -c  --chars    reverse the order of characters in each word
+:   -h  --help     show this message and exit
+:   -v  --version  display version information and exit
