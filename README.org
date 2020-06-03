@@ -1,14 +1,14 @@
 #+TITLE: The ReverseInatorInator
 
 * Why?
-Why not? `rev` exists, but it only does the default operation of `rii`.
-This program is slower than `rev`, but there's more choice.
+Why not? =rev= exists, but it only does the default operation of =rii=.
+This program is slower than =rev=, but there's more choice.
 * Compilation
-Compile it with `ghc`, I recommend the following:
+Compile it with =ghc=, I recommend the following:
 #+BEGIN_SRC sh :exports code
 ghc --make rii -static -O2
 #+END_SRC
-You can add `-rtsopts` or `-prof` if you're interested in those things.
+You can add =-rtsopts= or =-prof= if you're interested in those things.
 * Usage
 #+srcname: usagemessage
 #+BEGIN_SRC sh :exports results :results verbatim
