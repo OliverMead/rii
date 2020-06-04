@@ -103,27 +103,27 @@ opSummary = foldl1 (++) $ map (\(Option o _ _ _) -> o) options
 -- | define the command line options of the program
 options :: [OptDescr (Options -> Options)]
 options =
-    [ Option "l"
-             ["lines"]
-             (NoArg (\o -> o { optLines = True, optR = False }))
-             "reverse the order of the lines in the text"
-    , Option "w"
-             ["words"]
-             (NoArg (\o -> o { optWords = True, optR = False }))
-             "reverse the order of words in each line"
-    , Option "c"
-             ["chars"]
-             (NoArg (\o -> o { optChars = True, optR = False }))
-             "reverse the order of characters in each word"
-    , Option "h"
-             ["help"]
-             (NoArg (\o -> o { optHelp = Just $ flip usageInfo options }))
-             "show this message and exit"
-    , Option "v"
-             ["version"]
-             (NoArg (\o -> o { optVersion = Just versionMsg }))
-             "display version information and exit"
-    ]
+  [ Option "l"
+           ["lines"]
+           (NoArg (\o -> o { optLines = True, optR = False }))
+           "reverse the order of the lines in the text"
+  , Option "w"
+           ["words"]
+           (NoArg (\o -> o { optWords = True, optR = False }))
+           "reverse the order of words in each line"
+  , Option "c"
+           ["chars"]
+           (NoArg (\o -> o { optChars = True, optR = False }))
+           "reverse the order of characters in each word"
+  , Option "h"
+           ["help"]
+           (NoArg (\o -> o { optHelp = Just $ flip usageInfo options }))
+           "show this message and exit"
+  , Option "v"
+           ["version"]
+           (NoArg (\o -> o { optVersion = Just versionMsg }))
+           "display version information and exit"
+  ]
 
 -- | Create the version message from the program name
 versionMsg :: (PrintfType r) => String -> r
@@ -132,41 +132,36 @@ versionMsg name = printf "%s - The ReverseInatorInator, version %d.%d\n"
                          (fst version)
                          (snd version)
 
--- | Operated on the given command-line arguments
+-- | Operate on the given command-line arguments
 useArgs :: [String] -> IO ()
 useArgs cliargs = case getOpt Permute options cliargs of
   -- No unrecognised areguments
-    (optactions, args, []) ->
-        execute (foldl (\a b -> b a) startOpts optactions) args
-    (_, _, errors) -> getProgName >>= printError >> exitWith (ExitFailure 1)
-      where
-        printError str =
-            hPutStrLn stderr $ concat errors ++ usageInfo (header str) options
+  (optactions, args, []) ->
+    execute (foldl (\a b -> b a) startOpts optactions) args
+  (_, _, errors) -> getProgName >>= printError >> exitWith (ExitFailure 1)
+   where
+    printError str =
+      hPutStrLn stderr $ concat errors ++ usageInfo (header str) options
 
 -- | Pattern match the options object to determine how to run
 execute :: Options -> [String] -> IO ()
-execute (Options { optR = _, optLines = _, optWords = _, optChars = _, optHelp = Nothing, optVersion = Just f }) _
-    = getProgName >>= (putStr . f) >> exitSuccess
-execute (Options { optR = _, optLines = _, optWords = _, optChars = _, optHelp = Just g, optVersion = Just f }) _
-    = getProgName -- Version and help chosen
-        >>= (\s ->
-                (putStr $ f s)
-                    >> (printf "%s\n %s" (header s :: String) (g s))
-                    >> exitSuccess
-            )
-execute (Options { optR = _, optLines = _, optWords = _, optChars = _, optHelp = Just f, optVersion = _ }) _
-    = getProgName
-        >>= (\s -> printf "%s - %s\n %s\n %s"
-                          s
-                          fullname
-                          (header s :: String)
-                          (f s)
-            )
-        >>  exitSuccess
-execute (Options { optR = True, optLines = _, optWords = _, optChars = _, optHelp = _, optVersion = _ }) args
-    = interact' (newline . tail . reverse) args >> exitSuccess
-execute (Options { optR = _, optLines = l, optWords = w, optChars = c, optHelp = _, optVersion = _ }) args
-    = interact' (genReversal [c, w, l]) args >> exitSuccess
+execute (Options { optHelp = Nothing, optVersion = Just f }) _ =
+  getProgName >>= (putStr . f) >> exitSuccess
+execute (Options { optHelp = Just g, optVersion = Just f }) _ =
+  getProgName -- Version and help chosen
+    >>= (\s ->
+          (putStr $ f s)
+            >> (printf "%s\n %s" (header s :: String) (g s))
+            >> exitSuccess
+        )
+execute (Options { optHelp = Just f }) _ =
+  getProgName
+    >>= (\s -> printf "%s - %s\n %s\n %s" s fullname (header s :: String) (f s))
+    >>  exitSuccess
+execute (Options { optR = True }) args =
+  interact' (newline . tail . reverse) args >> exitSuccess
+execute (Options { optLines = l, optWords = w, optChars = c }) args =
+  interact' (genReversal [c, w, l]) args >> exitSuccess
 
 -- *** UTILITIES *** --
 
@@ -176,11 +171,11 @@ execute (Options { optR = _, optLines = l, optWords = w, optChars = c, optHelp =
 interact' :: (String -> String) -> [String] -> IO ()
 interact' f [] = interact f
 interact' f as =
-    (foldM (\s m -> (++ s) <$> m) "" $ map (\a -> readFile a) as)
-        >>= (return . f)
-        >>= putStr
+  (foldM (\s m -> (++ s) <$> m) "" $ map (\a -> readFile a) as)
+    >>= (return . f)
+    >>= putStr
 
--- | Generate a reveral function based on a boolean mask
+-- | Generate a reversal function based on a boolean mask
 genReversal :: [Bool] -> (String -> String)
 genReversal = foldl1 (.) . boolfilter operations
 
