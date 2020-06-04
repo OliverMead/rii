@@ -53,9 +53,9 @@ fullname = "The ReverseInatorInator"
 operations :: [String -> String]
 operations = [reverseChars, reverseWords, reverseLines]
 
--- | Entry point of the program, hands arguments over to handle
+-- | Entry point of the program, hands arguments over to useArgs
 main :: IO ()
-main = getArgs >>= handle
+main = getArgs >>= useArgs
 
 -- | Generate a 'Usage' header with the invocation name,
 -- | full name and a short list of possible options
@@ -133,34 +133,32 @@ versionMsg name = printf "%s - The ReverseInatorInator, version %d.%d\n"
                          (snd version)
 
 -- | Operated on the given command-line arguments
-handle :: [String] -> IO ()
-handle cliargs = case getOpt Permute options cliargs of
+useArgs :: [String] -> IO ()
+useArgs cliargs = case getOpt Permute options cliargs of
   -- No unrecognised areguments
-    (optactions, args, []) -> do
-        let -- unpack the options structure
-            Options { optR = r, optLines = l, optWords = w, optChars = c, optHelp = h, optVersion = v }
-                = foldl (\a b -> b a) (startOpts) optactions
-            chosenOp = genReversal [c, w, l]
-        case v of
-            Nothing   -> return ()
-            -- the `-v` option was given, display version info and exit
-            Just verf -> getProgName >>= putVer >> exitSuccess
-                where putVer str = putStr $ verf str
-        case h of
-            Nothing    -> return ()
-            Just helpf -> getProgName >>= putHelp >> exitSuccess
-              where
-                putHelp str = printf "%s - %s\n %s\n %s"
-                                     str
-                                     fullname
-                                     (header str :: String)
-                                     (helpf str)
-        when r (interact' (newline . tail . reverse) args >> exitSuccess)
-        interact' chosenOp args >> exitSuccess
+    (optactions, args, []) ->
+        execute (foldl (\a b -> b a) startOpts optactions) args
     (_, _, errors) -> getProgName >>= printError >> exitWith (ExitFailure 1)
       where
         printError str =
             hPutStrLn stderr $ concat errors ++ usageInfo (header str) options
+
+execute :: Options -> [String] -> IO ()
+execute (Options { optR = _, optLines = _, optWords = _, optChars = _, optHelp = _, optVersion = Just f }) _
+    = getProgName >>= (putStr . f) >> exitSuccess
+execute (Options { optR = _, optLines = _, optWords = _, optChars = _, optHelp = Just f, optVersion = _ }) _
+    = getProgName
+        >>= (\s -> printf "%s - %s\n %s\n %s"
+                          s
+                          fullname
+                          (header s :: String)
+                          (f s)
+            )
+        >>  exitSuccess
+execute (Options { optR = True, optLines = _, optWords = _, optChars = _, optHelp = _, optVersion = _ }) args
+    = interact' (newline . tail . reverse) args >> exitSuccess
+execute (Options { optR = _, optLines = l, optWords = w, optChars = c, optHelp = _, optVersion = _ }) args
+    = interact' (genReversal [c, w, l]) args >> exitSuccess
 
 -- *** UTILITIES *** --
 
