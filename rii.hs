@@ -1,3 +1,38 @@
+{-
+        <<<<<<<<<<<<<<                                                                                                                   <<<<<<<<<<<<<<
+       <:::::<<:::::< ________            ____                           ____            __            ____            __               <:::::<<:::::<
+      <:::::<<:::::< /_  __/ /_  ___     / __ \___ _   _____  __________/  _/___  ____ _/ /_____  ____/  _/___  ____ _/ /_____  _____  <:::::<<:::::<
+     <:::::<<:::::<   / / / __ \/ _ \   / /_/ / _ \ | / / _ \/ ___/ ___// // __ \/ __ `/ __/ __ \/ ___/ // __ \/ __ `/ __/ __ \/ ___/ <:::::<<:::::<
+    <:::::<<:::::<   / / / / / /  __/  / _, _/  __/ |/ /  __/ /  (__  )/ // / / / /_/ / /_/ /_/ / / _/ // / / / /_/ / /_/ /_/ / /    <:::::<<:::::<
+   <:::::<<:::::<   /_/ /_/ /_/\___/  /_/ |_|\___/|___/\___/_/  /____/___/_/ /_/\__,_/\__/\____/_/ /___/_/ /_/\__,_/\__/\____/_/    <:::::<<:::::<
+  <:::::<<:::::<    ---------------  --------------- ---------------  --------------- ---------------  -----------------------/    <:::::<<:::::<
+   <:::::<<:::::<   -:::::::::::::-  -:::::::::::::- -:::::::::::::-  -:::::::::::::- -:::::::::::::-  -:::::::::::::- ------/      <:::::<<:::::<
+    <:::::<<:::::<  ---------------  --------------- ---------------  --------------- ---------------  ---------------------/        <:::::<<:::::<
+     <:::::<<:::::<                                                                                                                   <:::::<<:::::<
+      <:::::<<:::::<                                                                                                                   <:::::<<:::::<
+       <:::::<<:::::<                                                                                                                   <:::::<<:::::<
+        <<<<<<<<<<<<<<                                                                                                                   <<<<<<<<<<<<<<
+-}
+{-| Description    : The ReverseInatorInator, for various ways of reversing text
+    Copyright      : (C) Oliver Mead, 2020
+    License        : GPL-2 or later
+    Maintainer     : oliver.j.mead@protonmail.com
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-}
+
 module Main where
 
 import           System.Console.GetOpt
