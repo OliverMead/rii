@@ -143,9 +143,17 @@ useArgs cliargs = case getOpt Permute options cliargs of
         printError str =
             hPutStrLn stderr $ concat errors ++ usageInfo (header str) options
 
+-- | Pattern match the options object to determine how to run
 execute :: Options -> [String] -> IO ()
-execute (Options { optR = _, optLines = _, optWords = _, optChars = _, optHelp = _, optVersion = Just f }) _
+execute (Options { optR = _, optLines = _, optWords = _, optChars = _, optHelp = Nothing, optVersion = Just f }) _
     = getProgName >>= (putStr . f) >> exitSuccess
+execute (Options { optR = _, optLines = _, optWords = _, optChars = _, optHelp = Just g, optVersion = Just f }) _
+    = getProgName -- Version and help chosen
+        >>= (\s ->
+                (putStr $ f s)
+                    >> (printf "%s\n %s" (header s :: String) (g s))
+                    >> exitSuccess
+            )
 execute (Options { optR = _, optLines = _, optWords = _, optChars = _, optHelp = Just f, optVersion = _ }) _
     = getProgName
         >>= (\s -> printf "%s - %s\n %s\n %s"
