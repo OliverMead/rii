@@ -158,22 +158,28 @@ execute (Options { optHelp = Just f }) _ =
   getProgName
     >>= (\s -> printf "%s - %s\n %s\n %s" s fullname (header s :: String) (f s))
     >>  exitSuccess
+execute (Options { optR = True }) [] =
+  -- no args, no mapM_
+  interact' (newline . tail . reverse) "" >> exitSuccess
+execute (Options { optLines = l, optWords = w, optChars = c }) [] =
+  -- no args, no mapM_
+  interact' (genReversal [c, w, l]) "" >> exitSuccess
 execute (Options { optR = True }) args =
-  interact' (newline . tail . reverse) args >> exitSuccess
+  -- args -> mapM_ over them
+  mapM_ (interact' (newline . tail . reverse)) args >> exitSuccess
 execute (Options { optLines = l, optWords = w, optChars = c }) args =
-  interact' (genReversal [c, w, l]) args >> exitSuccess
+  -- args -> mapM_ over them
+  mapM_ (interact' (genReversal [c, w, l])) args >> exitSuccess
 
 -- *** UTILITIES *** --
 
--- | Read from file(s) if given, if not use stdin
+-- | Read from file if given, if not use stdin
 --   Takes the function (String -> String) to be applied
---   and a reversed list of arguments
-interact' :: (String -> String) -> [String] -> IO ()
-interact' f [] = interact f
-interact' f as =
-  (foldM (\s m -> (++ s) <$> m) "" $ map (\a -> readFile a) as)
-    >>= (return . f)
-    >>= putStr
+interact' :: (String -> String) -> String -> IO ()
+interact' f "" = interact f
+interact' f s =
+  -- (foldM (\s m -> (++ s) <$> m) "" $ map (\a -> readFile a) as)
+  return s >>= readFile >>= (return . f) >>= putStr
 
 -- | Generate a reversal function based on a boolean mask
 genReversal :: [Bool] -> (String -> String)
